@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">YAWA</string>
+    <string name="cityLookup">Lookup City:</string>
+    <string name="city">City</string>
+    <string name="blank">-</string>
+    <string name="day">Day</string>
+    <string name="day1">Day 1</string>
+    <string name="day2">Day 2</string>
+    <string name="day3">Day 3</string>
+    <string name="day4">Day 4</string>
+    <string name="day5">Day 5</string>
+    <string name="temperature">Temperature:</string>
+    <string name="tempMin">Min Temperature:</string>
+    <string name="tempMax">Max Temperature:</string>
+    <string name="description">Description:</string>
+    <string name="humidity">Humidity:</string>
+</resources>
