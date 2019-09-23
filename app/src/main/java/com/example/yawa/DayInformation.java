@@ -1,6 +1,8 @@
 package com.example.yawa;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +20,10 @@ public class DayInformation extends AppCompatActivity {
     String specifiedCity;
     String dayClicked;
     int dayInt;
+    RecyclerView recyclerView;
+    RecyclerView.Adapter rAdapter;
+    RecyclerView.LayoutManager layoutManager;
+    String[] dataset = new String[6];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,17 +36,21 @@ public class DayInformation extends AppCompatActivity {
         dayClicked = intent.getStringExtra(MainActivity.DAY_EXTRA);
         dayInt = intent.getIntExtra(MainActivity.DAY_INT_EXTRA, 1);
 
-        TextView day = findViewById(R.id.Day);
-        day.setText(dayClicked);
+        dataset[0] = dayClicked + " - " + specifiedCity;
+        dataset[1] = "Temperature: - ";
+        dataset[2] = "Minimum Temperature: - ";
+        dataset[3] = "Maximum Temperature: - ";
+        dataset[4] = "Humidity: - ";
+        dataset[5] = "Description: - ";
 
-        TextView city = findViewById(R.id.City);
-        city.setText(specifiedCity);
+        recyclerView = findViewById(R.id.RecyclerViewDay);
+        recyclerView.setHasFixedSize(true);
 
-        TextView temp = findViewById(R.id.TempVal);
-        TextView tempMin = findViewById(R.id.TempMinVal);
-        TextView temMax = findViewById(R.id.TempMaxVal);
-        TextView desc = findViewById(R.id.DescriptionVal);
-        TextView humidity = findViewById(R.id.HumidityVal);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        rAdapter = new RecyclerAdapter(dataset, false);
+        recyclerView.setAdapter(rAdapter);
 
         try {
             JSONObject reader = new JSONObject(weatherJSON);
@@ -72,14 +82,18 @@ public class DayInformation extends AppCompatActivity {
             JSONObject w = weather.getJSONObject(0);
             String description = w.getString("description");
 
-            temp.setText(temperature + " °C");
-            tempMin.setText(min + " °C");
-            temMax.setText(max + " °C");
-            humidity.setText(humi + "%");
-            desc.setText(description);
+            dataset[1] = "Temperature: " + temperature + " °C";
+            dataset[2] = "Minimum Temperature: " + min + " °C";
+            dataset[3] = "Maximum Temperature: " + max + "°C";
+            dataset[4] = "Humidity: " + humi + "%";
+            dataset[5] = "Description: " + description;
+
+            rAdapter.notifyDataSetChanged();
         }
         catch (JSONException e) {
             Log.e("400", "JSON parsing error " + e);
         }
     }
+
+
 }

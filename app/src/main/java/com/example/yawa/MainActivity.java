@@ -1,6 +1,8 @@
 package com.example.yawa;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,57 +28,37 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
 
-    String weatherJSON = null;
-    String specifiedCity = "Hamilton"; //Hamilton by default
+    static View.OnClickListener onClickMain = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int itemPosition = recyclerView.getChildAdapterPosition(v);
+            if (weatherJSON != null) {
+                Intent intent = new Intent(v.getContext(), DayInformation.class);
+                intent.putExtra(JSON_EXTRA, weatherJSON);
+                intent.putExtra(CITY_EXTRA, specifiedCity);
+                intent.putExtra(DAY_EXTRA, dataset[itemPosition - itemPosition%3]); //i.e. get the name of the day
+                intent.putExtra(DAY_INT_EXTRA, itemPosition/3);
+                v.getContext().startActivity(intent);
+            }
+        }
+    };
+
+    static String weatherJSON = null;
+    static String specifiedCity = "Hamilton"; //Hamilton by default
+    static String[] dataset = new String[15]; //5 days, each with 3 rows of data (day title, temperature, description)
+
+    static RecyclerView recyclerView;
+    RecyclerView.Adapter rAdapter;
+    RecyclerView.LayoutManager layoutManager;
+
     public static final String JSON_EXTRA = "weatherJSON";
     public static final String CITY_EXTRA = "userSpecifiedCity";
     public static final String DAY_EXTRA = "dayClicked";
     public static final String DAY_INT_EXTRA = "dayInt";
-
-    TextView day1;
-    TextView day1Temp;
-    TextView day1Desc;
-
-    TextView day2;
-    TextView day2Temp;
-    TextView day2Desc;
-
-    TextView day3;
-    TextView day3Temp;
-    TextView day3Desc;
-
-    TextView day4;
-    TextView day4Temp;
-    TextView day4Desc;
-
-    TextView day5;
-    TextView day5Temp;
-    TextView day5Desc;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        day1 = findViewById(R.id.Day1);
-        day1Temp = findViewById(R.id.Day1TempVal);
-        day1Desc = findViewById(R.id.Day1DescVal);
-
-        day2 = findViewById(R.id.Day2);
-        day2Temp = findViewById(R.id.Day2TempVal);
-        day2Desc = findViewById(R.id.Day2DescVal);
-
-        day3 = findViewById(R.id.Day3);
-        day3Temp = findViewById(R.id.Day3TempVal);
-        day3Desc = findViewById(R.id.Day3DescVal);
-
-        day4 = findViewById(R.id.Day4);
-        day4Temp = findViewById(R.id.Day4TempVal);
-        day4Desc = findViewById(R.id.Day4DescVal);
-
-        day5 = findViewById(R.id.Day5);
-        day5Temp = findViewById(R.id.Day5TempVal);
-        day5Desc = findViewById(R.id.Day5DescVal);
 
         EditText City = findViewById(R.id.SearchCity);
         City.setText(specifiedCity);
@@ -91,59 +73,31 @@ public class MainActivity extends AppCompatActivity {
                 return handled;
             }
         });
-    }
 
-    public void Day1Click(View v) {
-        Intent intent = new Intent(this, DayInformation.class);
-        intent.putExtra(JSON_EXTRA, weatherJSON);
-        intent.putExtra(CITY_EXTRA, specifiedCity);
-        intent.putExtra(DAY_EXTRA, day1.getText());
-        intent.putExtra(DAY_INT_EXTRA, 0);
-        startActivity(intent);
-    }
+        dataset[0] = "Day 1";
+        dataset[1] = "\t\tTemperature: -";
+        dataset[2] = "\t\tDescription: -";
+        dataset[3] = "Day 2";
+        dataset[4] = "\t\tTemperature: -";
+        dataset[5] = "\t\tDescription: -";
+        dataset[6] = "Day 3";
+        dataset[7] = "\t\tTemperature: -";
+        dataset[8] = "\t\tDescription: -";
+        dataset[9] = "Day 4";
+        dataset[10] = "\t\tTemperature: -";
+        dataset[11] = "\t\tDescription: -";
+        dataset[12] = "Day 5";
+        dataset[13] = "\t\tTemperature: -";
+        dataset[14] = "\t\tDescription: -";
 
-    public void Day2Click(View v) {
-        if (weatherJSON != null) {
-            Intent intent = new Intent(this, DayInformation.class);
-            intent.putExtra(JSON_EXTRA, weatherJSON);
-            intent.putExtra(CITY_EXTRA, specifiedCity);
-            intent.putExtra(DAY_EXTRA, day2.getText());
-            intent.putExtra(DAY_INT_EXTRA, 1);
-            startActivity(intent);
-        }
-    }
+        recyclerView = findViewById(R.id.RecyclerViewMain);
+        recyclerView.setHasFixedSize(true);
 
-    public void Day3Click(View v) {
-        if (weatherJSON != null) {
-            Intent intent = new Intent(this, DayInformation.class);
-            intent.putExtra(JSON_EXTRA, weatherJSON);
-            intent.putExtra(CITY_EXTRA, specifiedCity);
-            intent.putExtra(DAY_EXTRA, day3.getText());
-            intent.putExtra(DAY_INT_EXTRA, 2);
-            startActivity(intent);
-        }
-    }
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
-    public void Day4Click(View v) {
-        if (weatherJSON != null) {
-            Intent intent = new Intent(this, DayInformation.class);
-            intent.putExtra(JSON_EXTRA, weatherJSON);
-            intent.putExtra(CITY_EXTRA, specifiedCity);
-            intent.putExtra(DAY_EXTRA, day4.getText());
-            intent.putExtra(DAY_INT_EXTRA, 3);
-            startActivity(intent);
-        }
-    }
-
-    public void Day5Click(View v) {
-        if (weatherJSON != null) {
-            Intent intent = new Intent(this, DayInformation.class);
-            intent.putExtra(JSON_EXTRA, weatherJSON);
-            intent.putExtra(CITY_EXTRA, specifiedCity);
-            intent.putExtra(DAY_EXTRA, day5.getText());
-            intent.putExtra(DAY_INT_EXTRA, 4);
-            startActivity(intent);
-        }
+        rAdapter = new RecyclerAdapter(dataset, true);
+        recyclerView.setAdapter(rAdapter);
     }
 
     public boolean lookupCity (String city) {
@@ -192,37 +146,39 @@ public class MainActivity extends AppCompatActivity {
                     switch (i / 8) {
                         case 0:
                             //day1
-                            day1Temp.setText(temp + " °C");
-                            day1Desc.setText(description);
-                            day1.setText(dayOfWeek(dt));
+                            dataset[0] = dayOfWeek(dt);
+                            dataset[1] = "\t\tTemperature: " + temp + " °C";
+                            dataset[2] = "\t\tDescription: " + description;
                             break;
                         case 1:
                             //day2
-                            day2Temp.setText(temp + " °C");
-                            day2Desc.setText(description);
-                            day2.setText(dayOfWeek(dt));
+                            dataset[3] = dayOfWeek(dt);
+                            dataset[4] = "\t\tTemperature: " + temp + " °C";
+                            dataset[5] = "\t\tDescription: " + description;
                             break;
                         case 2:
                             //day3
-                            day3Temp.setText(temp + " °C");
-                            day3Desc.setText(description);
-                            day3.setText(dayOfWeek(dt));
+                            dataset[6] = dayOfWeek(dt);
+                            dataset[7] = "\t\tTemperature: " + temp + " °C";
+                            dataset[8] = "\t\tDescription: " + description;
                             break;
                         case 3:
                             //day4
-                            day4Temp.setText(temp + " °C");
-                            day4Desc.setText(description);
-                            day4.setText(dayOfWeek(dt));
+                            dataset[9] = dayOfWeek(dt);
+                            dataset[10] = "\t\tTemperature: " + temp + " °C";
+                            dataset[11] = "\t\tDescription: " + description;
                             break;
                         default:
                             //day5
-                            day5Temp.setText(temp + " °C");
-                            day5Desc.setText(description);
-                            day5.setText(dayOfWeek(dt));
+                            dataset[12] = dayOfWeek(dt);
+                            dataset[13] = "\t\tTemperature: " + temp + " °C";
+                            dataset[14] = "\t\tDescription: " + description;
                             break;
                     }
+
                 }
             }
+            rAdapter.notifyDataSetChanged();
         }
         catch (JSONException e) {
             Log.e("400", "JSON parsing error " + e);

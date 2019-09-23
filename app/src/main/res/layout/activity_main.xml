@@ -32,6 +32,15 @@
         app:layout_constraintStart_toEndOf="@+id/textView2"
         app:layout_constraintTop_toTopOf="@+id/textView2" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/RecyclerViewMain"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SearchCity" />
+    <!--
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -404,5 +413,6 @@
         </TableRow>
 
     </TableLayout>
+    -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@
   <dictionary name="camer">
     <words>
       <w>appid</w>
+      <w>dataset</w>
       <w>humi</w>
       <w>openweathermap</w>
     </words>
